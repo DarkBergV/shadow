@@ -22,6 +22,7 @@ class Game:
 
 
     def run(self):
+        isJump = False
         while self.running:
             self.display.fill((255,255,255))
             for event in pygame.event.get():
@@ -38,6 +39,9 @@ class Game:
                     if event.key == pygame.K_a:
                         self.movement[1] = True
 
+                    if event.key == pygame.K_w and not isJump:
+                        self.movement[3] = True
+
 
                 
 
@@ -52,7 +56,7 @@ class Game:
                         self.movement[3] = False
 
                 if keys[pygame.K_w]:
-                    self.movement[3] =True
+                    isJump = True
 
                 print(self.movement)
             print(self.movement[2] - self.movement[3])
