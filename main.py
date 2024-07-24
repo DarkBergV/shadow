@@ -1,7 +1,9 @@
 import pygame
 import sys
 
-from sprites import player 
+from sprites import player
+from utils import load_img,load_imgs
+from tilemap import Tilemap
 
 
 WIN_WIDTH = 640
@@ -17,14 +19,27 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         self.movement = [0,0,0,0]
-        self.player = player(self,[0,0],[32,32],(0,0,0))
+        self.player = player(self,[12, 9],[32,32],(0,0,0))
+        self.assets = {'tiles/ground/ground': load_imgs('tiles/ground')}
+        self.tilemap = Tilemap(self, 32)
+        self.scene = []
+        self.load_level()
+
+    def load_level(self):
+        self.tilemap.load('map.json')
+
+        for ground in self.tilemap.extract([('tiles/ground/ground',0)], keep = True):
+            self.scene.append(pygame.Rect(4 + ground['pos'][0], 4 + ground['pos'][1], 32, 32))
+        
 
 
 
     def run(self):
         isJump = False
         while self.running:
+   
             self.display.fill((255,255,255))
+            self.tilemap.render(self.display, offset = (0,0))
             for event in pygame.event.get():
                 keys = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
@@ -60,7 +75,7 @@ class Game:
 
                 print(self.movement)
             print(self.movement[2] - self.movement[3])
-            self.player.update(
+            self.player.update( self.tilemap,
                 [self.movement[0] - self.movement[1],  - self.movement[3] ]
             )
             
