@@ -28,6 +28,7 @@ class Game:
         self.scene = []
         self.load_level()
         self.isJump = False
+        self.scroll = [0, 0]
 
     def load_level(self):
         self.tilemap.load('map.json')
@@ -43,7 +44,11 @@ class Game:
         while self.running:
    
             self.display.fill((255,255,255))
-            self.tilemap.render(self.display, offset = (0,0))
+            self.tilemap.render(self.display, self.scroll)
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0] )/ 30
+            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1] )/ 30
+
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             for event in pygame.event.get():
                 keys = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
@@ -88,7 +93,7 @@ class Game:
                 [self.movement[0] - self.movement[1], self.movement[2]  -   self.movement[3] ]
             )
             
-            self.player.render(self.display,[0,0])
+            self.player.render(self.display, render_scroll)
 
             self.screen.blit(
                 pygame.transform.scale(self.display, self.screen.get_size()), (0,0))

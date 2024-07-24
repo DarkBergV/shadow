@@ -1,6 +1,6 @@
 
 import pygame
-
+from utils import Timer
 
 class Body(pygame.sprite.Sprite):
     def __init__(self,game,pos,size,color):
@@ -11,7 +11,11 @@ class Body(pygame.sprite.Sprite):
         self.display = pygame.Surface(self.size)
         self.display.fill(color) 
         self.collisions = {'up':False, 'down':False, 'left':False, 'right':False}
+        
         self.was_on_floor = False
+        self.coyote = False
+        self.timer = Timer(1000)
+        
         self.y = 0
 
     def rect(self):
@@ -49,10 +53,8 @@ class Body(pygame.sprite.Sprite):
 
                 self.pos[1] = body_rect.y
         
-        print(self.collisions)
-        print(self.pos[1])
-        
-            
+    
+   
 
 
     def apply_gravity(self):
@@ -63,8 +65,20 @@ class Body(pygame.sprite.Sprite):
         
      
     def can_coyote(self):
+        timer = Timer(1000)
         if not self.collisions['down'] and self.was_on_floor and not self.game.isJump and self.velocity[1] >= 0:
-            self.velocity[1] = 0
+             
+             self.coyote_timer()
+
+    def coyote_timer(self):
+                
+        self.timer.activate()
+        self.timer.update()
+        
+
+        if self.timer.active:
+            print('why')
+
 
 
 
