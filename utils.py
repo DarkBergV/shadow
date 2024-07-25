@@ -27,7 +27,7 @@ class Timer:
         self.active = True
         self.start = get_ticks()
 
-    def deativate(self):
+    def deactivate(self):
         self.active= False
         self.start = 0
         print("sus")
@@ -35,8 +35,8 @@ class Timer:
         if self.active:
             current_time = get_ticks()
             print(self.start)
-            print(self.duration)
-            if  current_time <= self.duration:
+            print(current_time)
+            if  current_time - self.start >= self.duration:
                 print('sus')
-                self.deativate()
+                self.deactivate()
          

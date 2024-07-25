@@ -27,7 +27,7 @@ class Game:
         self.tilemap = Tilemap(self, 32)
         self.scene = []
         self.load_level()
-        self.isJump = False
+        
         self.scroll = [0, 0]
 
     def load_level(self):
@@ -55,7 +55,9 @@ class Game:
                     
                     pygame.quit()
                     sys.exit()
-
+                if event.type == COYOTE_JUMP_EVENT:
+                    print('victory royale')
+                    self.player.was_on_floor = False
              
 
                 if event.type == pygame.KEYDOWN:
@@ -65,8 +67,8 @@ class Game:
                     if event.key == pygame.K_a:
                         self.movement[1] = True
 
-                    if event.key == pygame.K_w and not self.isJump:
-                        self.player.velocity[1] = -3
+                    if event.key == pygame.K_w :
+                        self.player.jump()
                    
 
 
@@ -82,8 +84,7 @@ class Game:
                     if event.key == pygame.K_w:
                         self.movement[3] = False
 
-                if keys[pygame.K_w]:
-                    self.isJump = True
+          
 
              
 

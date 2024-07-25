@@ -1,6 +1,7 @@
 
 import pygame
 from utils import Timer
+COYOTE_JUMP_EVENT = pygame.USEREVENT + 1
 
 class Body(pygame.sprite.Sprite):
     def __init__(self,game,pos,size,color):
@@ -11,6 +12,7 @@ class Body(pygame.sprite.Sprite):
         self.display = pygame.Surface(self.size)
         self.display.fill(color) 
         self.collisions = {'up':False, 'down':False, 'left':False, 'right':False}
+   
         
         self.was_on_floor = False
         self.coyote = False
@@ -44,7 +46,7 @@ class Body(pygame.sprite.Sprite):
                     body_rect.bottom = rect.top
                     self.collisions['down'] = True
                     self.y = body_rect.y
-                    self.game.isJump = False
+             
                     self.was_on_floor = True
                 if framemove[1] < 0:
                     body_rect.top = rect.bottom
@@ -52,6 +54,7 @@ class Body(pygame.sprite.Sprite):
 
 
                 self.pos[1] = body_rect.y
+        
         
     
    
@@ -65,15 +68,24 @@ class Body(pygame.sprite.Sprite):
         
      
     def can_coyote(self):
-        timer = Timer(1000)
-        if not self.collisions['down'] and self.was_on_floor and not self.game.isJump and self.velocity[1] >= 0:
+
+      
+      
+
+        if not self.collisions['down'] and self.was_on_floor and self.velocity[1] >= 0:
              
-             self.coyote_timer()
+            pygame.time.set_timer(COYOTE_JUMP_EVENT, 1000)
+        elif not self.was_on_floor:
+            pygame.time.set_timer(COYOTE_JUMP_EVENT, 0)
+            #self.isJump = True
+       
+
 
     def coyote_timer(self):
                 
         self.timer.activate()
         self.timer.update()
+        
         
 
         if self.timer.active:
@@ -91,10 +103,29 @@ class Body(pygame.sprite.Sprite):
 class player(Body):
     def __init__(self, game, pos, size, color):
         super().__init__(game, pos, size, color)
+        self.jump_value = 1
+        self.jumps = self.jump_value
         
 
     def update(self,tilemap, movement):
+        print(self.jumps)
+        if self.collisions['down']:
+            self.jumps = self.jump_value
+        
         
         super().update(tilemap, movement = movement)
+        
+
+    def jump(self):
+        if self.jumps > 0: 
+            self.velocity[1] =-3
+
+        if not self.collisions['down']:
+            self.jumps -=1
+        else:
+            self.jumps = self.jump_value
+        
+            
+
 
         
