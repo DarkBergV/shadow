@@ -46,6 +46,8 @@ class Body(pygame.sprite.Sprite):
                     body_rect.bottom = rect.top
                     self.collisions['down'] = True
                     self.y = body_rect.y
+                    
+                    self.jumps = self.jump_value
              
                     self.was_on_floor = True
                 if framemove[1] < 0:
@@ -70,15 +72,15 @@ class Body(pygame.sprite.Sprite):
     def can_coyote(self):
 
       
-      
+        print(self.was_on_floor)
 
         if not self.collisions['down'] and self.was_on_floor and self.velocity[1] >= 0:
-             
-            pygame.time.set_timer(COYOTE_JUMP_EVENT, 1000)
-        elif not self.was_on_floor:
-            pygame.time.set_timer(COYOTE_JUMP_EVENT, 0)
-            #self.isJump = True
-       
+            
+            pygame.time.set_timer(COYOTE_JUMP_EVENT, 500)
+        if not self.collisions['down']:
+                self.was_on_floor = False
+
+
 
 
     def coyote_timer(self):
@@ -104,26 +106,25 @@ class player(Body):
     def __init__(self, game, pos, size, color):
         super().__init__(game, pos, size, color)
         self.jump_value = 1
+        
         self.jumps = self.jump_value
         
 
     def update(self,tilemap, movement):
-        print(self.jumps)
-        if self.collisions['down']:
-            self.jumps = self.jump_value
+     
+    
         
+
         
         super().update(tilemap, movement = movement)
         
 
     def jump(self):
         if self.jumps > 0: 
-            self.velocity[1] =-3
-
-        if not self.collisions['down']:
+            self.velocity[1] =-7
             self.jumps -=1
-        else:
-            self.jumps = self.jump_value
+            print(self.jumps)
+            
         
             
 

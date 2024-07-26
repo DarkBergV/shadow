@@ -56,8 +56,12 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == COYOTE_JUMP_EVENT:
-                    print('victory royale')
+                    
                     self.player.was_on_floor = False
+                    self.player.jumps-=1
+                    pygame.time.set_timer(COYOTE_JUMP_EVENT, 0)
+                    
+                    
              
 
                 if event.type == pygame.KEYDOWN:
