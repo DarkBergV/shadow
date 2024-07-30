@@ -60,6 +60,7 @@ class Game:
 
 
     def run(self):
+        pygame.time.set_timer(BLINK_LIGHT_EVENT, 5000)
 
         while self.running:
             
@@ -84,7 +85,7 @@ class Game:
                 
                 if event.type == BLINK_LIGHT_EVENT:
                     
-                    print("skibidi")
+                    self.tilemap.visible_light()
                     
                     
              

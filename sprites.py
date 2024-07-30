@@ -25,7 +25,7 @@ class Body(pygame.sprite.Sprite):
         return pygame.Rect(self.pos[0],self.pos[1],self.size[0],self.size[1])
 
     def update(self,tilemap,movement, offset=[0,0]):
-        self.can_coyote()
+        
         self.collisions = {'up':False, 'down':False, 'left':False, 'right':False}
        
         self.apply_gravity()
@@ -70,10 +70,57 @@ class Body(pygame.sprite.Sprite):
         
         
      
+ 
+
+
+
+    def render(self,surf,offset = (0,0)):
+        rect = self.rect()
+        surf.blit(self.display, 
+                  (rect[0] - offset[0], rect[1] - offset[1]))
+        
+
+class player(Body):
+    def __init__(self, game, pos, size, color):
+        super().__init__(game, pos, size, color)
+        self.jump_value = 1
+        
+        self.jumps = self.jump_value
+
+        self.status = 'normal'
+
+    
+        
+
+    def update(self,tilemap, movement):
+        self.can_coyote()
+        self.into_light(tilemap)
+        
+    
+        
+
+        
+        super().update(tilemap, movement = movement)
+        
+
+    def jump(self):
+        if self.jumps > 0: 
+            self.velocity[1] =-7
+            self.jumps -=1
+           
+
+    def into_light(self, tilemap):
+        body_rect = self.rect()
+        for tile in tilemap.light_detect(self.pos):
+        
+            if body_rect.colliderect(tile['rect']) and tile['visible']:
+                self.status = 'detected'
+                
+            elif not body_rect.colliderect(tile['rect']):
+                self.status = 'normal'
+        print(self.status)
+    
     def can_coyote(self):
-
-      
-
 
         if not self.collisions['down'] and self.was_on_floor and self.velocity[1] >= 0:
             
@@ -95,55 +142,16 @@ class Body(pygame.sprite.Sprite):
             print('why')
 
 
-
-
-    def render(self,surf,offset = (0,0)):
-        rect = self.rect()
-        surf.blit(self.display, 
-                  (rect[0] - offset[0], rect[1] - offset[1]))
-        
-
-class player(Body):
-    def __init__(self, game, pos, size, color):
-        super().__init__(game, pos, size, color)
-        self.jump_value = 1
-        
-        self.jumps = self.jump_value
-
-        self.status = 'normal'
-        
-
-    def update(self,tilemap, movement):
-        self.into_light(tilemap)
-        pygame.time.set_timer(BLINK_LIGHT_EVENT, 5000)
-    
-        
-
-        
-        super().update(tilemap, movement = movement)
-        
-
-    def jump(self):
-        if self.jumps > 0: 
-            self.velocity[1] =-7
-            self.jumps -=1
-           
-
-    def into_light(self, tilemap):
-        body_rect = self.rect()
-        for tile in tilemap.light_detect(self.pos):
-        
-            if body_rect.colliderect(tile['rect']):
-                self.status = 'detected'
-                
-            elif not body_rect.colliderect(tile['rect']):
-                self.status = 'normal'
-
  
 
                     
             
-            
 
 
         
+class Enemy(Body):
+    def __init__(self, game, pos, size, color):
+        super().__init__(game, pos, size, color)
+    
+    def update(self, tilemap, movement, offset=[0, 0]):
+        return super().update(tilemap, movement, offset)

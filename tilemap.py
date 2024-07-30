@@ -110,12 +110,12 @@ class Tilemap:
                          tile['pos'][1] * self.tile_size,
                         self.tile_size,
                         self.tile_size,
-                    )})
+                    ), 'visible': self.visible})
         
         return light
     
-    def visible_light(self, id_pairs, visible ):
-        pass
+    def visible_light(self):
+        self.visible = not self.visible
 
     def solid_check(self, pos):
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
