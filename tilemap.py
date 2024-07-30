@@ -3,6 +3,7 @@ import json
 
 NEIGHBOR_OFFSETS = [(-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (0, 0)]
 PHYSICS_TILES = {"tiles/ground/ground"}
+LIGHT_TILES = {"tiles/light/light"}
 
 
 class Tilemap:
@@ -11,6 +12,7 @@ class Tilemap:
         self.tile_size = tilesize
         self.tilemap = {}
         self.offgrid_tiles = []
+        self.visible = True
 
     def extract(self, id_pairs, keep=False):
         matches = []
@@ -97,6 +99,23 @@ class Tilemap:
                 )
         
         return rects
+    
+    def light_detect(self, pos):
+        light = []
+
+        for tile in self.tiles_around(pos):
+            if tile["type"] in LIGHT_TILES:
+                light.append({'pos':tile['pos'], 'type':tile['type'], 'rect': pygame.Rect(
+                        tile['pos'][0] * self.tile_size,
+                         tile['pos'][1] * self.tile_size,
+                        self.tile_size,
+                        self.tile_size,
+                    )})
+        
+        return light
+    
+    def visible_light(self, id_pairs, visible ):
+        pass
 
     def solid_check(self, pos):
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
@@ -115,11 +134,14 @@ class Tilemap:
 
         for loc in self.tilemap:
             tile = self.tilemap[loc]
-           
-            surf.blit(
-                self.game.assets[tile["type"]][tile["variant"]],
-                (
-                    tile["pos"][0] * self.tile_size - offset[0],
-                    tile["pos"][1] * self.tile_size - offset[1],
-                ),
-            )
+            if not tile["type"] == 'tiles/light/light' or self.visible:
+                
+                surf.blit(
+                    self.game.assets[tile["type"]][tile["variant"]],
+                    (
+                        tile["pos"][0] * self.tile_size - offset[0],
+                        tile["pos"][1] * self.tile_size - offset[1],
+                    ),
+                )
+
+            

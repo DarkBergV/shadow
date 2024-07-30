@@ -2,6 +2,7 @@
 import pygame
 from utils import Timer
 COYOTE_JUMP_EVENT = pygame.USEREVENT + 1
+BLINK_LIGHT_EVENT = pygame.USEREVENT + 2 
 
 class Body(pygame.sprite.Sprite):
     def __init__(self,game,pos,size,color):
@@ -72,7 +73,7 @@ class Body(pygame.sprite.Sprite):
     def can_coyote(self):
 
       
-        print(self.was_on_floor)
+
 
         if not self.collisions['down'] and self.was_on_floor and self.velocity[1] >= 0:
             
@@ -108,10 +109,13 @@ class player(Body):
         self.jump_value = 1
         
         self.jumps = self.jump_value
+
+        self.status = 'normal'
         
 
     def update(self,tilemap, movement):
-     
+        self.into_light(tilemap)
+        pygame.time.set_timer(BLINK_LIGHT_EVENT, 5000)
     
         
 
@@ -123,9 +127,22 @@ class player(Body):
         if self.jumps > 0: 
             self.velocity[1] =-7
             self.jumps -=1
-            print(self.jumps)
-            
+           
+
+    def into_light(self, tilemap):
+        body_rect = self.rect()
+        for tile in tilemap.light_detect(self.pos):
         
+            if body_rect.colliderect(tile['rect']):
+                self.status = 'detected'
+                
+            elif not body_rect.colliderect(tile['rect']):
+                self.status = 'normal'
+
+ 
+
+                    
+            
             
 
 

@@ -20,7 +20,8 @@ class Editor:
         
         self.clock = pygame.time.Clock()
 
-        self.assets = {'tiles/ground/ground': load_imgs('tiles/ground')}
+        self.assets = {'tiles/ground/ground': load_imgs('tiles/ground'),
+                       'tiles/light/light': load_imgs('tiles/light')}
 
         self.tilemap = Tilemap(self, 32)
 
