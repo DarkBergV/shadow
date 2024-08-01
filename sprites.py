@@ -118,7 +118,7 @@ class player(Body):
                 
             elif not body_rect.colliderect(tile['rect']):
                 self.status = 'normal'
-        print(self.status)
+ 
     
     def can_coyote(self):
 
@@ -152,6 +152,38 @@ class player(Body):
 class Enemy(Body):
     def __init__(self, game, pos, size, color):
         super().__init__(game, pos, size, color)
+        self.jump_value = 1
+        self.visible = False
+        self.move = 1
     
     def update(self, tilemap, movement, offset=[0, 0]):
+        self.in_the_light(tilemap)
+        self.pos[0] -= self.move
+        
         return super().update(tilemap, movement, offset)
+    
+    def render(self,surf,offset = (0,0)):
+        if self.visible:
+            rect = self.rect()
+            surf.blit(self.display, 
+                    (rect[0] - offset[0], rect[1] - offset[1]))
+            
+
+
+    def in_the_light(self, tilemap):
+        enemy_rect = self.rect()
+        
+        for tile in tilemap.light_detect(self.pos):
+            if enemy_rect.colliderect(tile['rect']) and tile['visible']:
+                self.visible = True
+                
+
+            if enemy_rect.colliderect(tile['rect']) and not tile['visible']:
+                print('aaaaaaaaa')
+                self.move *= 0
+                self.visible = False
+
+            if not enemy_rect.colliderect(tile['rect']) :
+                self.move =-1
+
+            

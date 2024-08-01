@@ -2,7 +2,7 @@ import pygame
 import sys
 import time
 
-from sprites import player
+from sprites import Enemy, player
 from utils import load_img,load_imgs
 from tilemap import Tilemap
 
@@ -23,7 +23,10 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         self.movement = [0,0,0,0]
-        self.player = player(self,[12, 9],[32,32],(0,0,0))
+        self.player = player(self,[300, 9],[32,32],(0,0,0))
+
+
+        self.enemy = Enemy(self,[450,9], [32,32], (255,0,0))
         self.assets = {'tiles/ground/ground': load_imgs('tiles/ground'),
                        'tiles/light/light': load_imgs('tiles/light')}
         self.tilemap = Tilemap(self, 32)
@@ -121,7 +124,8 @@ class Game:
           
 
              
-
+            self.enemy.update(self.tilemap, (0,0))
+            self.enemy.render(self.display, render_scroll)
             
 
             self.player.update( self.tilemap,
