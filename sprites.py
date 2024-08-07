@@ -1,4 +1,3 @@
-
 import pygame
 from utils import Timer
 COYOTE_JUMP_EVENT = pygame.USEREVENT + 1
@@ -31,7 +30,7 @@ class Body(pygame.sprite.Sprite):
         self.apply_gravity()
         
         framemove = (self.velocity[0] + movement[0], self.velocity[1] + movement[1])
-        
+        self.framemove = framemove
         self.pos[0] += framemove[0]
         
         
@@ -128,6 +127,9 @@ class player(Body):
         if not self.collisions['down']:
                 self.was_on_floor = False
 
+   
+
+
 
 
 
@@ -153,12 +155,17 @@ class Enemy(Body):
     def __init__(self, game, pos, size, color):
         super().__init__(game, pos, size, color)
         self.jump_value = 1
-        self.visible = False
+        self.visible = True
+        self.bound = True
         self.move = 1
     
-    def update(self, tilemap, movement, offset=[0, 0]):
+    def update(self, tilemap, movement = [0,0], offset=[0, 0]):
         self.in_the_light(tilemap)
-        self.pos[0] -= self.move
+        self.out_of_light(tilemap)
+        self.enemy_collide()
+        self.pos[0] += self.move 
+        
+        
         
         return super().update(tilemap, movement, offset)
     
@@ -176,14 +183,56 @@ class Enemy(Body):
         for tile in tilemap.light_detect(self.pos):
             if enemy_rect.colliderect(tile['rect']) and tile['visible']:
                 self.visible = True
-                
+   
 
             if enemy_rect.colliderect(tile['rect']) and not tile['visible']:
-                print('aaaaaaaaa')
-                self.move *= 0
+           
+                
                 self.visible = False
 
-            if not enemy_rect.colliderect(tile['rect']) :
-                self.move =-1
+    def out_of_light(self,tilemap):
+        enemy_rect = self.rect()
+        
 
+        for tile in tilemap.light_detect(self.pos):
+            if  not enemy_rect.colliderect(tile['rect']):
+                self.bound = False
+                
+                
+            else:
+                self.bound = True
+        if not self.bound :
+            self.move *= -1
+
+            
+
+        
+
+        print(self.move)
+
+    def enemy_collide(self):
+        player =  self.game.player
+        rect = self.rect()
+        enemy_collision = {'up':False, 'down':False, 'left':False, 'right':False}
+        
+        
+        if rect.colliderect(player.rect()) and self.visible:
+            if self.framemove[0] < 0:
+                player.rect().left = rect.right
+
+                player.pos[0] = rect.x + 10
+                player.pos[1] -= 30
+            
+            if self.framemove[0] > 0:
+                player.rect().right = rect.left
+
+                player.pos[0] = rect.x - 10
+                player.pos[1] -= 30
+
+            
+
+
+            
+
+           
             

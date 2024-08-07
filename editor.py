@@ -42,6 +42,9 @@ class Editor:
 
         self.ongrind = True
 
+        #enemies
+        self.enemies = []
+
     def run(self):
         while self.running:
             self.display.fill((155,155,155))

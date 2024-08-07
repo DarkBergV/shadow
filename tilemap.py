@@ -121,7 +121,15 @@ class Tilemap:
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
 
         if tile_loc in self.tilemap:
-            if self.tilemap[tile_loc]["type"] in PHYSICS_TILES:
+            if self.tilemap[tile_loc]["type"] in PHYSICS_TILES :
+                return self.tilemap[tile_loc]
+            
+    def light_check(self,pos):
+        tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
+
+        if tile_loc in self.tilemap:
+            if self.tilemap[tile_loc]["type"] in LIGHT_TILES:
+                print(self.tilemap[tile_loc]["type"])
                 return self.tilemap[tile_loc]
 
     def render(self, surf, offset=(0, 0)):

@@ -27,6 +27,7 @@ class Game:
 
 
         self.enemy = Enemy(self,[450,9], [32,32], (255,0,0))
+        self.enemies = []
         self.assets = {'tiles/ground/ground': load_imgs('tiles/ground'),
                        'tiles/light/light': load_imgs('tiles/light')}
         self.tilemap = Tilemap(self, 32)
@@ -40,7 +41,7 @@ class Game:
 
     def load_level(self):
         self.tilemap.load('map.json')
-
+        self.enemies.append(self.enemy)
         for ground in self.tilemap.extract([('tiles/ground/ground',0)], keep = True):
             self.scene.append(pygame.Rect(4 + ground['pos'][0], 4 + ground['pos'][1], 32, 32))
 
