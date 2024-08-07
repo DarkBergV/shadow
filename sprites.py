@@ -12,7 +12,7 @@ class Body(pygame.sprite.Sprite):
         self.display = pygame.Surface(self.size)
         self.display.fill(color) 
         self.collisions = {'up':False, 'down':False, 'left':False, 'right':False}
-   
+        
         
         self.was_on_floor = False
         self.coyote = False
@@ -32,6 +32,26 @@ class Body(pygame.sprite.Sprite):
         framemove = (self.velocity[0] + movement[0], self.velocity[1] + movement[1])
         self.framemove = framemove
         self.pos[0] += framemove[0]
+        body_rect = self.rect()
+        for rect in tilemap.physics_rect_around(self.pos):
+         
+            if body_rect.colliderect(rect):
+                
+                if framemove[0] > 0:
+                    body_rect.right = rect.left
+                    self.collisions['right'] = True
+                    
+                    
+                    
+                    
+                if framemove[0] < 0:
+                    body_rect.left = rect.right
+                    self.collisions['left'] = True
+                    
+
+
+                self.pos[0] = body_rect.x
+        
         
         
 
@@ -94,7 +114,7 @@ class player(Body):
     def update(self,tilemap, movement):
         self.can_coyote()
         self.into_light(tilemap)
-        
+        self.enemy_collide()
     
         
 
@@ -127,11 +147,29 @@ class player(Body):
         if not self.collisions['down']:
                 self.was_on_floor = False
 
-   
+    def enemy_collide(self):
+        enemies = [enemy for enemy in self.game.enemies]
+        rect = self.rect()
+        enemy_collision = {'up':False, 'down':False, 'left':False, 'right':False}
+       
+        for enemy in enemies:
+            if rect.colliderect(enemy.rect()) and enemy.visible:
+                if self.framemove[0] <= 0:
+                    rect.left = enemy.rect().right
+
+                    self.pos[0] = rect.x + 10
+                    self.pos[1] -= 30
+                
+                if self.framemove[0] >= 0:
+                    rect.right = enemy.rect().left
+
+                    self.pos[0] = rect.x - 10
+                    self.pos[1] -= 30
 
 
 
-
+    def flip(self):
+        self.flip = not self.flip
 
     def coyote_timer(self):
                 
@@ -162,7 +200,6 @@ class Enemy(Body):
     def update(self, tilemap, movement = [0,0], offset=[0, 0]):
         self.in_the_light(tilemap)
         self.out_of_light(tilemap)
-        self.enemy_collide()
         self.pos[0] += self.move 
         
         
@@ -209,25 +246,6 @@ class Enemy(Body):
         
 
         print(self.move)
-
-    def enemy_collide(self):
-        player =  self.game.player
-        rect = self.rect()
-        enemy_collision = {'up':False, 'down':False, 'left':False, 'right':False}
-        
-        
-        if rect.colliderect(player.rect()) and self.visible:
-            if self.framemove[0] < 0:
-                player.rect().left = rect.right
-
-                player.pos[0] = rect.x + 10
-                player.pos[1] -= 30
-            
-            if self.framemove[0] > 0:
-                player.rect().right = rect.left
-
-                player.pos[0] = rect.x - 10
-                player.pos[1] -= 30
 
             
 
