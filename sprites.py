@@ -12,6 +12,7 @@ class Body(pygame.sprite.Sprite):
         self.display = pygame.Surface(self.size)
         self.display.fill(color) 
         self.collisions = {'up':False, 'down':False, 'left':False, 'right':False}
+        self.sides = {'right':False, 'left':False}
         
         
         self.was_on_floor = False
@@ -25,11 +26,13 @@ class Body(pygame.sprite.Sprite):
 
     def update(self,tilemap,movement, offset=[0,0]):
         
+        
         self.collisions = {'up':False, 'down':False, 'left':False, 'right':False}
        
         self.apply_gravity()
         
         framemove = (self.velocity[0] + movement[0], self.velocity[1] + movement[1])
+        self.check_sides(framemove)
         self.framemove = framemove
         self.pos[0] += framemove[0]
         body_rect = self.rect()
@@ -98,6 +101,16 @@ class Body(pygame.sprite.Sprite):
         surf.blit(self.display, 
                   (rect[0] - offset[0], rect[1] - offset[1]))
         
+    def check_sides(self, framemove):
+        if framemove[0] < 0:
+            self.sides['left'] =  True
+            self.sides['right'] =  False
+        
+        elif framemove[0] > 0:
+            self.sides['left'] =  False
+            self.sides['right'] =  True
+
+        
 
 class player(Body):
     def __init__(self, game, pos, size, color):
@@ -108,12 +121,16 @@ class player(Body):
 
         self.status = 'normal'
 
+        
+
     
         
 
     def update(self,tilemap, movement):
+        
         self.can_coyote()
         self.into_light(tilemap)
+        
         self.enemy_collide()
     
         
@@ -151,25 +168,30 @@ class player(Body):
         enemies = [enemy for enemy in self.game.enemies]
         rect = self.rect()
         enemy_collision = {'up':False, 'down':False, 'left':False, 'right':False}
+        
+        
+
        
         for enemy in enemies:
             if rect.colliderect(enemy.rect()) and enemy.visible:
-                if self.framemove[0] <= 0:
+                if self.sides['left']:
                     rect.left = enemy.rect().right
 
                     self.pos[0] = rect.x + 10
                     self.pos[1] -= 30
                 
-                if self.framemove[0] >= 0:
+                if self.sides['right']:
                     rect.right = enemy.rect().left
 
                     self.pos[0] = rect.x - 10
                     self.pos[1] -= 30
 
-
+    
 
     def flip(self):
         self.flip = not self.flip
+
+    
 
     def coyote_timer(self):
                 
