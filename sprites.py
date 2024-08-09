@@ -1,3 +1,4 @@
+from shutil import move
 import pygame
 from utils import Timer
 COYOTE_JUMP_EVENT = pygame.USEREVENT + 1
@@ -222,7 +223,30 @@ class Enemy(Body):
     def update(self, tilemap, movement = [0,0], offset=[0, 0]):
         self.in_the_light(tilemap)
         self.out_of_light(tilemap)
-        self.pos[0] += self.move 
+        self.pos[0] += self.move
+        
+        body_rect = self.rect()
+        for rect in tilemap.physics_rect_around(self.pos):
+         
+            if body_rect.colliderect(rect):
+                
+                if self.move > 0:
+                    body_rect.right = rect.left
+                    self.collisions['right'] = True
+                    
+                    
+                    
+                    
+                if self.move < 0:
+                    body_rect.left = rect.right
+                    self.collisions['left'] = True
+
+                self.move *=-1
+                    
+
+
+                self.pos[0] = body_rect.x
+        
         
         
         
