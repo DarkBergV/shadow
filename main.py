@@ -1,3 +1,4 @@
+from unittest import enterModuleContext
 import pygame
 import sys
 import time
@@ -12,6 +13,7 @@ WIND_HEIGHT = 480
 
 COYOTE_JUMP_EVENT = pygame.USEREVENT + 1
 BLINK_LIGHT_EVENT = pygame.USEREVENT + 2
+INVINCIBILITY_EVENT = pygame.USEREVENT + 3
 class Game:
     def __init__(self):
         pygame.init()
@@ -92,6 +94,9 @@ class Game:
                 if event.type == BLINK_LIGHT_EVENT:
                     
                     self.tilemap.visible_light()
+
+                if event.type == INVINCIBILITY_EVENT:
+                    self.player.can_collide = True
                     
                     
              

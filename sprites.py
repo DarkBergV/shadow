@@ -3,6 +3,8 @@ import pygame
 from utils import Timer
 COYOTE_JUMP_EVENT = pygame.USEREVENT + 1
 BLINK_LIGHT_EVENT = pygame.USEREVENT + 2 
+INVINCIBILITY_EVENT = pygame.USEREVENT + 3
+
 
 class Body(pygame.sprite.Sprite):
     def __init__(self,game,pos,size,color):
@@ -122,6 +124,11 @@ class player(Body):
 
         self.status = 'normal'
 
+        self.lives= 3
+
+        self.can_collide = True
+
+
         
 
     
@@ -174,7 +181,8 @@ class player(Body):
 
        
         for enemy in enemies:
-            if rect.colliderect(enemy.rect()) and enemy.visible:
+            if rect.colliderect(enemy.rect()) and enemy.visible and self.can_collide:
+                self.hp()
                 if self.sides['left']:
                     rect.left = enemy.rect().right
 
@@ -186,6 +194,7 @@ class player(Body):
 
                     self.pos[0] = rect.x - 10
                     self.pos[1] -= 30
+                
 
     
 
@@ -203,6 +212,15 @@ class player(Body):
 
         if self.timer.active:
             print('why')
+
+    def hp(self):
+        self.lives -= 1
+        print(self.lives)
+        self.can_collide = False
+        pygame.time.set_timer(INVINCIBILITY_EVENT, 5000)
+
+
+
 
 
  
@@ -253,7 +271,7 @@ class Enemy(Body):
         return super().update(tilemap, movement, offset)
     
     def render(self,surf,offset = (0,0)):
-        if self.visible:
+        if self.visible and self.game.player.status == 'detected':
             rect = self.rect()
             surf.blit(self.display, 
                     (rect[0] - offset[0], rect[1] - offset[1]))
@@ -291,7 +309,7 @@ class Enemy(Body):
 
         
 
-        print(self.move)
+
 
             
 
